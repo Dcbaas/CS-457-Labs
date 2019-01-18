@@ -26,8 +26,12 @@ int main(int argc, char** argv){
     return 1;
   }
 
+  //I added a timeout for the client when
+  //it looks for the response. This was for
+  //convinence of testing when I messed
+  //up inputing the correct ip and or port.
   struct timeval timeout;
-  timeout.tv_sec=5;
+  timeout.tv_sec=15;
   timeout.tv_usec=0;
   setsockopt(sockfd,SOL_SOCKET,
       SO_RCVTIMEO,&timeout,sizeof(timeout));
