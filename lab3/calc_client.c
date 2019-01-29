@@ -105,7 +105,7 @@ int main(int argc, char** argv){
     }
     else{
       int result_val;
-      memcpy(&result_val, result, sizeof(int));
+      memcpy(&result_val, result, sizeof(int)); 
       printf("The result is: %d\n",result_val);
       close(sockfd);
       return 0;
