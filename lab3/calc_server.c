@@ -95,7 +95,7 @@ void do_math(char* buffer, char* answer_buff){
 
 //My attempts to detect overflow were not good enough and caused errors, Therefore I 
 //Looked for solutions online. This overflow checker is based off this solution that 
-//someone posted on stack overflow.
+//The user pmg on stack overflow.
 //https://stackoverflow.com/questions/199333/how-to-detect-integer-overflow
 int check_overflow(char operation, int a, int b){
   int result = 0;
