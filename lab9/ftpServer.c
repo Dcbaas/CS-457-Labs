@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/select.h>
 
@@ -20,13 +21,19 @@ int main(int argc, char** argv){
         portNum = atoi(argv[1]);
     }
     //Socket stuff 
+ 
     int serverSocket = socket(AF_INET,SOCK_STREAM,0);
-
-    struct sockaddr_in serveraddr,clientaddr;
-
     //Select Stuff
     fd_set sockets;
     FD_SET(serverSocket,&sockets); 
+
+
+    if(serverSocket <0){
+        printf("Error establishing socket\n");
+        return 1;
+    }
+
+    struct sockaddr_in serveraddr,clientaddr;
 
     //File handling stuff
     //Buffer serves as use for the sockets as well and starts at 1000.
@@ -37,23 +44,33 @@ int main(int argc, char** argv){
 
     //Starting the server
     serveraddr.sin_family=AF_INET;
-    serveraddr.sin_port=htons(9876);
+    serveraddr.sin_port=htons(3456);
     serveraddr.sin_addr.s_addr=INADDR_ANY;
+    
     bind(serverSocket,(struct sockaddr*)&serveraddr,
             sizeof(serveraddr));
-    listen(serverSocket,10);
+
+    int result = listen(serverSocket,10);
+    printf("The result of listen is %d\n", result);
     while(1){
         fd_set tmpset=sockets;
         int n = select(FD_SETSIZE,&tmpset,NULL,NULL,NULL);
+        printf("The value of n is %d\n", n);
+        printf("The value of FD_ISSET is %d\n", FD_ISSET(serverSocket, &tmpset));
         if(FD_ISSET(serverSocket,&tmpset)){
-            int len = sizeof(clientaddr);
+            printf("Added a select\n");
+            socklen_t len = sizeof(clientaddr);
+            printf("Pre accept\nh");
             int clientsocket = accept(serverSocket,
                     (struct sockaddr*)&clientaddr,&len);
             FD_SET(clientsocket,&sockets);
+            printf("End of adding a select\n");
         } else {
             int ii;
             for(ii=0; ii<FD_SETSIZE; ii++){
+                printf("%d\n", ii);
                 if(FD_ISSET(ii,&tmpset)){
+                    printf("Got a request\n");
                     //Handle the file process
                     int n = recv(ii, filename, 1000, 0);
 
@@ -73,6 +90,7 @@ int main(int argc, char** argv){
                 }
             }
         }
+        printf("End loop\n");
     }
     return 0;
 }
